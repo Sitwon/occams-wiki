@@ -10,5 +10,5 @@ Occam's Wiki is a project to develop a simple but extensible Wiki framework. The
 * `backend/` - The storage/retrieval-related component(s)
 * `input/` - The input-related component(s)
 * `output/` - The output-related components
-	* `output/render` - The rendering component(s)
-	* `output/decorate` - The output decorating component(s)
+	* `output/render/` - The rendering component(s)
+	* `output/decorate/` - The output decorating component(s)
