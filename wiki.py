@@ -35,32 +35,13 @@ def fail():
 	sys.exit(1)
 
 def do_get():
-	query_string = os.getenv('QUERY_STRING')
-	if query_string == '':
-		path = 'Home'
-	else:
-		path = query_string.split('&', 1)[0]
-	filepath = os.path.join(WIKI_DIR, path)
-	if os.path.isfile(filepath):
-		contentFile = open(filepath)
-		content = contentFile.read()
-
-		# Pass content to the Output Engine
-		outputContent = content
-		scriptPath = os.path.join(os.path.split(os.getenv('SCRIPT_FILENAME'))[0], 'output')
-		outputScripts = glob(scriptPath + '/*')
-		for script in outputScripts:
-			if os.path.isfile(script):
-				cmd = subprocess.Popen([script], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-				outputContent = cmd.communicate(outputContent+'\n')[0]
-
-		print outputContent
-	else:
-		content = ''
-		print '<h1>Page Not Found</h1>'
-		print '<h2>Create the page</h2>'
-	print FORM % {'action': os.getenv('REQUEST_URI'), 'content': content}
-
+	scriptPath = os.path.join(os.path.split(sys.argv[0])[0], 'output')
+	outputScripts = glob(scriptPath + os.path.sep + '*')
+	for script in outputScripts:
+		if os.path.isfile(script):
+			cmd = subprocess.Popen([script], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+			outputContent = cmd.communicate('')[0]
+	print outputContent
 
 def do_post():
 	#cgi.print_form(form)
