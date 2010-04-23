@@ -22,15 +22,6 @@ FORM = '''
 </form>
 '''
 
-print "Content-Type: text/html"
-print
-form = cgi.FieldStorage()
-'''
-cgi.print_form(form)
-cgi.print_environ()
-cgi.print_environ_usage()
-'''
-
 def fail():
 	sys.exit(1)
 
@@ -76,18 +67,32 @@ def do_delete():
 	print '<h1>Page Deleted</h1>'
 	print '<h2>' + filepath + '</h2>'
 
-actions = {
-		'GET': do_get,
-		'POST': do_post,
-		'PUT': do_put,
-		'DELETE': do_delete,
-		}
+if sys.argv[1].lower() == '-pull':
+	scriptPath = os.path.join(os.path.split(sys.argv[0])[0], 'backend')
+	backendScripts = glob(scriptPath + os.path.sep + '*')
+	for script in backendScripts:
+		if os.path.isfile(script):
+			backendCmd = subprocess.Popen([script], stdout=subprocess.PIPE)
+			content = backendCmd.communicate()[0]
+			break
+	sys.stdout.write(content)
+else:
+	print "Content-Type: text/html"
+	print
+	form = cgi.FieldStorage()
 
-method = os.getenv('REQUEST_METHOD')
-if method == None:
-	fail()
+	actions = {
+			'GET': do_get,
+			'POST': do_post,
+			'PUT': do_put,
+			'DELETE': do_delete,
+			}
 
-print "<html><body>"
-actions.get(method.upper(), fail)()
-print "</body></html>"
+	method = os.getenv('REQUEST_METHOD')
+	if method == None:
+		fail()
+
+	print "<html><body>"
+	actions.get(method.upper(), fail)()
+	print "</body></html>"
 

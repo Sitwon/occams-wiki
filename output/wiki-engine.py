@@ -8,18 +8,10 @@ from glob import glob
 import cgitb
 cgitb.enable()
 
-WIKI_DIR='/tmp/wiki'
-query_string = os.getenv('QUERY_STRING')
-if query_string == '':
-	path = 'Home'
-else:
-	path = query_string.split('&', 1)[0]
-filepath = os.path.join(WIKI_DIR, path)
-if os.path.isfile(filepath):
-	contentFile = open(filepath)
-	content = contentFile.read()
-else:
-	content = ''
+conductor = os.getenv('SCRIPT_FILENAME')
+conductorCmd = subprocess.Popen([conductor, '-pull'], stdout=subprocess.PIPE)
+content = conductorCmd.communicate()[0]
+if content == '':
 	print '<h1>Page Not Found</h1>'
 	print '<h2>Create the page</h2>'
 

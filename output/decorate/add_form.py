@@ -2,6 +2,10 @@
 
 import os
 import sys
+import subprocess
+
+import cgitb
+cgitb.enable()
 
 FORM = '''
 <p />
@@ -12,7 +16,11 @@ FORM = '''
 </form>
 '''
 
-content = sys.stdin.read()
-print content
+renderedContent = sys.stdin.read()
+print renderedContent
+
+conductor = os.getenv('SCRIPT_FILENAME')
+conductorCmd = subprocess.Popen([conductor, '-pull'], stdout=subprocess.PIPE)
+content = conductorCmd.communicate()[0]
 print FORM % {'action': os.getenv('REQUEST_URI'), 'content': content}
 
