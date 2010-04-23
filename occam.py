@@ -67,7 +67,7 @@ def do_delete():
 	print '<h1>Page Deleted</h1>'
 	print '<h2>' + filepath + '</h2>'
 
-if sys.argv[1].lower() == '-pull':
+if (len(sys.argv) > 1) && (sys.argv[1].lower() == '-pull'):
 	scriptPath = os.path.join(os.path.split(sys.argv[0])[0], 'backend')
 	backendScripts = glob(scriptPath + os.path.sep + '*')
 	for script in backendScripts:
