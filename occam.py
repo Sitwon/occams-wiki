@@ -38,7 +38,7 @@ def do_post():
 	content = form.getfirst('content')
 	scriptPath = os.path.join(os.path.split(sys.argv[0])[0], 'backend')
 	backendScripts = glob(scriptPath + os.path.sep + '*')
-	for script in backScripts:
+	for script in backendScripts:
 		if os.path.isfile(script):
 			backendCmd = subprocess.Popen([script, '-push'], stdin=subprocess.PIPE)
 			backendCmd.communicate(content)
