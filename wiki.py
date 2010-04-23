@@ -51,8 +51,7 @@ def do_get():
 		outputScripts = glob(scriptPath + '/*')
 		for script in outputScripts:
 			cmd = subprocess.Popen([script], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-			outputContent = cmd.communicate(outputContent)[0]
-
+			outputContent = cmd.communicate(outputContent+'\n')[0]
 
 		print outputContent
 	else:
@@ -75,7 +74,16 @@ def do_post():
 	contentFile = open(filepath, 'w')
 	contentFile.write(content)
 	contentFile.close()
-	print content
+
+	# Pass content to the Output Engine
+	outputContent = content
+	scriptPath = os.path.join(os.path.split(os.getenv('SCRIPT_FILENAME'))[0], 'output')
+	outputScripts = glob(scriptPath + '/*')
+	for script in outputScripts:
+		cmd = subprocess.Popen([script], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+		outputContent = cmd.communicate(outputContent+'\n')[0]
+
+	print outputContent
 	print FORM % {'action': os.getenv('REQUEST_URI'), 'content': content}
 
 def do_put():
