@@ -2,6 +2,9 @@
 
 import os
 import sys
+import subprocess
+from glob import glob
+
 import cgi
 import cgitb
 cgitb.enable()
@@ -41,7 +44,17 @@ def do_get():
 	if os.path.isfile(filepath):
 		contentFile = open(filepath)
 		content = contentFile.read()
-		print content
+
+		# Pass content to the Output Engine
+		outputContent = content
+		scriptPath = os.path.join(os.path.split(os.getenv('SCRIPT_FILENAME'))[0], 'output')
+		outputScripts = glob(scriptPath + '/*')
+		for script in outputScripts:
+			cmd = subprocess.Popen([script], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+			outputContent = cmd.communicate(outputContent)[0]
+
+
+		print outputContent
 	else:
 		content = ''
 		print '<h1>Page Not Found</h1>'
