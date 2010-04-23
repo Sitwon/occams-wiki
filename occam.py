@@ -35,18 +35,14 @@ def do_get():
 	print outputContent
 
 def do_post():
-	#cgi.print_form(form)
-	#cgi.print_environ()
-	query_string = os.getenv('QUERY_STRING')
-	if query_string == '':
-		path = 'Home'
-	else:
-		path = query_string.split('&', 1)[0]
-	filepath = os.path.join(WIKI_DIR, path)
 	content = form.getfirst('content')
-	contentFile = open(filepath, 'w')
-	contentFile.write(content)
-	contentFile.close()
+	scriptPath = os.path.join(os.path.split(sys.argv[0])[0], 'backend')
+	backendScripts = glob(scriptPath + os.path.sep + '*')
+	for script in backScripts:
+		if os.path.isfile(script):
+			backendCmd = subprocess.Popen([script, '-push'], stdin=subprocess.PIPE)
+			backendCmd.communicate(content)
+			break
 
 	# Pass it to the GET handler to do output
 	do_get()
@@ -67,12 +63,12 @@ def do_delete():
 	print '<h1>Page Deleted</h1>'
 	print '<h2>' + filepath + '</h2>'
 
-if (len(sys.argv) > 1) and (sys.argv[1].lower() == '-pull'):
+if (len(sys.argv) > 1) and (sys.argv[2].lower() == '-pull'):
 	scriptPath = os.path.join(os.path.split(sys.argv[0])[0], 'backend')
 	backendScripts = glob(scriptPath + os.path.sep + '*')
 	for script in backendScripts:
 		if os.path.isfile(script):
-			backendCmd = subprocess.Popen([script], stdout=subprocess.PIPE)
+			backendCmd = subprocess.Popen([script, '-pull'], stdout=subprocess.PIPE)
 			content = backendCmd.communicate()[0]
 			break
 	sys.stdout.write(content)
